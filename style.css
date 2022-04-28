@@ -86,13 +86,14 @@ h1 {
   width: 20%;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 .buttons input {
   width: 25px;
   height: 25px;
   cursor: pointer;
+  border: 0;
 }
 
 .buttons button {
