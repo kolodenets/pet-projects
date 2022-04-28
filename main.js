@@ -1,6 +1,10 @@
 const deskTaskInput = document.getElementById('description-task');
 const addTaskBtn = document.getElementById('add-task-btn');
 const todosWrapper = document.querySelector('.todos-wrapper');
+const dateWrapper = document.querySelector('.date-wrapper');
+
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 let tasks;
 
@@ -16,15 +20,46 @@ class Task
     this.completed = false;
   }
 }
-const createTemplate = (task, index) => {
+
+const createDateTemplate = () => {
+  let newDate = new Date();
+  let day = days[newDate.getDay()];
+  let date = newDate.getDate();
+  let month = months[newDate.getMonth()];
+  return `
+  <div>
+    <div>
+      <span class="day">${day},</span>
+      <span class="date">${date}</span>
+    </div>
+    <div class="month">
+      ${month}
+    </div>
+  </div>
+  `
+}
+dateWrapper.innerHTML += createDateTemplate();
+
+const createTaskTemplate = (task, index) => {
   return `
   <div class="todo-item ${task.completed ? 'checked' : ''} animate__animated">
     <div class="description">
-      <div id="description-${index}" class="${task.completed ? 'completed' : ''}" ondblclick="updateTask(${index})">${task.description}</div>
-      <input type="text" class="desc-input invisible" value="${task.description}" id="input-${index}" onblur="changeTaskDesc(${index})">
+      <div id="description-${index}" 
+            class="task-descr ${task.completed ? 'completed' : ''}" 
+            ondblclick="updateTask(${index})"
+          >${task.description}
+      </div>
+      <input type="text" 
+            class="desc-input invisible" 
+            value="${task.description}" 
+            id="input-${index}" 
+            onblur="changeTaskDesc(${index})">
     </div>
     <div class="buttons">
-      <input onclick="completeTask(${index})" type="checkbox" class="btn-complete animate__animated" ${task.completed ? 'checked' : ''}>
+      <input onclick="completeTask(${index})" 
+              type="checkbox" 
+              class="btn-complete animate__animated" 
+              ${task.completed ? 'checked' : ''}>
       <button onclick="deleteTask(${index})" class="btn-delete">Delete</button>
     </div>
   </div>
@@ -60,7 +95,7 @@ const fillHtml = () => {
   if (tasks.length > 0) {
     filterTasks();
     tasks.forEach((item, index) => {
-      todosWrapper.innerHTML += createTemplate(item, index)
+      todosWrapper.innerHTML += createTaskTemplate(item, index)
     })
     todoItemElems = document.querySelectorAll('.todo-item')
   }
@@ -91,6 +126,7 @@ const deleteTask = (index) => {
 }
 
 addTaskBtn.addEventListener('click', () => {
+  if (!deskTaskInput.value) { return }
   tasks.push(new Task(deskTaskInput.value))
   applyChanges();
   deskTaskInput.value = '';
