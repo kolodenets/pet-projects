@@ -18,21 +18,41 @@ class Task
 }
 const createTemplate = (task, index) => {
   return `
-  <div class="todo-item ${task.completed ? 'checked' : ''}">
+  <div class="todo-item ${task.completed ? 'checked' : ''} animate__animated">
     <div class="description">
-      <div>${task.description}</div>
+      <div id="description-${index}" class="${task.completed ? 'completed' : ''}" ondblclick="updateTask(${index})">${task.description}</div>
+      <input type="text" class="desc-input invisible" value="${task.description}" id="input-${index}" onblur="changeTaskDesc(${index})">
     </div>
     <div class="buttons">
-      <input onclick="completeTask(${index})" type="checkbox" class="btn-complete" ${task.completed ? 'checked' : ''}>
+      <input onclick="completeTask(${index})" type="checkbox" class="btn-complete animate__animated" ${task.completed ? 'checked' : ''}>
       <button onclick="deleteTask(${index})" class="btn-delete">Delete</button>
     </div>
   </div>
   `
 }
+
+const updateTask = (index) => {
+  document.getElementById(`description-${index}`).classList.add('invisible');
+  let input = document.getElementById(`input-${index}`);
+  input.classList.remove('invisible');
+  input.focus();
+}
+
+const changeTaskDesc = (index) => {
+  let taskDesc = document.getElementById(`description-${index}`);
+  let input = document.getElementById(`input-${index}`);
+  tasks[index].description = input.value;
+  taskDesc.classList.remove('invisible');
+  input.classList.add('invisible');
+  applyChanges();
+}
+
 const filterTasks = () => {
   const activeTasks = tasks.length && tasks.filter(item => item.completed==false)
   const completedTasks = tasks.length && tasks.filter(item => item.completed==true)
-  tasks = [...activeTasks, ...completedTasks]
+  if (activeTasks || completedTasks) {
+    tasks = [...activeTasks, ...completedTasks]
+  }
 }
 
 const fillHtml = () => {
@@ -58,19 +78,14 @@ const applyChanges = () => {
 }
 const completeTask = (index) => {
   tasks[index].completed = !tasks[index].completed;
-// if(tasks[index].completed) {
-//   todoItemElems[index].classList.add('checked')
-// } else {
-//   todoItemElems[index].classList.remove('checked')
-// }
-applyChanges();
+  applyChanges();
 }
 
 const deleteTask = (index) => {
-  todoItemElems[index].classList.add('deletion');
+  todoItemElems[index].classList.add('animate__backOutLeft');
   setTimeout(() => {
     tasks.splice(index, 1);
-  applyChanges();
+    applyChanges();
   }, 500)
   
 }
