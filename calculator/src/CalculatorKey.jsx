@@ -1,8 +1,8 @@
 import React from 'react';
 
-const CalculatorKey = ({className, ...props}) => {
+const CalculatorKey = ({className, onPress, ...props}) => {
   return (
-    <button className={`calculator-key ${className}`} {...props}/>
+    <button className={`calculator-key ${className}`} onClick={onPress} {...props}/>
   );
 };
 
