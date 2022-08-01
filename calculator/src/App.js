@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState } from 'react';
 import './App.css';
 import CalculatorKey from './CalculatorKey';
 import CalculatorDisplay from './CalculatorDisplay';
@@ -106,12 +106,10 @@ const performOperation = (nextOperator) => {
     
       const newValue = CalculatorOperations[operator](currentValue, inputValue)
     
-      console.log('before setState', state)
       setState({
         value: newValue,
         displayValue: String(newValue)
       })
-      console.log('after setState', state)
     }
   }
 
@@ -120,8 +118,48 @@ const performOperation = (nextOperator) => {
     waitingForOperand: true,
     operator: nextOperator
   }))
-
 }
+
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+const handleKeyDown = (event) => {
+  let { key } = event
+  
+  if (key === 'Enter')
+    key = '='
+  
+  if ((/\d/).test(key)) {
+    event.preventDefault()
+    inputDigit(parseInt(key, 10))
+  } else if (key in CalculatorOperations) {
+    event.preventDefault()
+    performOperation(key)
+  } else if (key === '.') {
+    event.preventDefault()
+    inputDot()
+  } else if (key === '%') {
+    event.preventDefault()
+    inputPercent()
+  } else if (key === 'Backspace') {
+    event.preventDefault()
+    clearLastChar()
+  } 
+  else if (key === 'Clear') {
+    event.preventDefault()
+    if (displayValue !== '0') {
+      clearDisplay()
+    } else {
+      clearAll()
+    }
+  }
+}
+
+useEffect(() => {
+  document.addEventListener('keydown', handleKeyDown);
+  return () => {
+    document.removeEventListener('keydown', handleKeyDown)
+  }
+}, [handleKeyDown])
 
   return (
     <div className="app">
